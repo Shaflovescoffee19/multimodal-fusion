@@ -1,6 +1,6 @@
-# 🧬 Multi-Modal Data Fusion — Combining Genomic, Microbiome, and Clinical Data
+# 🧬 Multi-Modal Data Fusion -> Combining Genomic, Microbiome, and Clinical Data
 
-Real biological systems do not operate through a single data layer. Disease risk emerges from the interplay between genetic predisposition, the microbial environment, and clinical and lifestyle factors — and models trained on any one layer alone leave substantial predictive signal on the table. This project builds and compares three fundamentally different strategies for combining multiple data modalities, and rigorously tests whether fusion actually outperforms the best single-modality baseline.
+Real biological systems do not operate through a single data layer. Disease risk emerges from the interplay between genetic predisposition, the microbial environment, and clinical and lifestyle factors, and models trained on any one layer alone leave substantial predictive signal on the table. This project builds and compares three fundamentally different strategies for combining multiple data modalities, and rigorously tests whether fusion actually outperforms the best single-modality baseline.
 
 ---
 
@@ -21,22 +21,22 @@ Real biological systems do not operate through a single data layer. Disease risk
 
 Three modalities are simulated with realistic statistical properties:
 
-**Genomic** features follow a continuous distribution with signal concentrated in a subset of SNPs. **Microbiome** features are Dirichlet-distributed (compositional — values sum to 1, as in real relative abundance data). **Clinical** features follow domain-appropriate distributions — BMI normally distributed, binary indicators for smoking and family history, continuous values for lab measurements.
+**Genomic** features follow a continuous distribution with signal concentrated in a subset of SNPs. **Microbiome** features are Dirichlet-distributed (compositional values sum to 1, as in real relative abundance data). **Clinical** features follow domain-appropriate distributions, BMI normally distributed, binary indicators for smoking and family history, continuous values for lab measurements.
 
-Each modality contains real signal plus noise, with different features informative in each — requiring genuine integration rather than one modality dominating.
+Each modality contains real signal plus noise, with different features informative in each requiring genuine integration rather than one modality dominating.
 
 ---
 
 ## 🤖 The Three Fusion Strategies
 
-### Early Fusion — Feature Concatenation
+### Early Fusion -> Feature Concatenation
 All three modalities are concatenated into a single feature vector before training one XGBoost model. Simple and allows the model to learn cross-modal interactions directly. The risk: high dimensionality and different statistical properties across modalities can cause one modality to dominate.
 
-### Late Fusion — Prediction Averaging
-A separate model is trained independently for each modality (XGBoost for genomic, Random Forest for microbiome, Logistic Regression for clinical). Their output probabilities are combined — both simple average and AUC-weighted average. Each modality gets a model suited to its own properties, and missing data is handled naturally by averaging whatever modalities are available.
+### Late Fusion -> Prediction Averaging
+A separate model is trained independently for each modality (XGBoost for genomic, Random Forest for microbiome, Logistic Regression for clinical). Their output probabilities are combined both simple average and AUC-weighted average. Each modality gets a model suited to its own properties, and missing data is handled naturally by averaging whatever modalities are available.
 
-### Intermediate Fusion — Stacking
-Modality-specific models generate cross-validated out-of-fold predictions. These predictions become meta-features for a logistic regression meta-model that learns how to optimally combine modality-specific signals. The critical implementation detail: cross-validated OOF predictions are used — never the model's own training predictions — to prevent data leakage into the meta-model.
+### Intermediate Fusion -> Stacking
+Modality-specific models generate cross-validated out-of-fold predictions. These predictions become meta-features for a logistic regression meta-model that learns how to optimally combine modality-specific signals. The critical implementation detail: cross-validated OOF predictions are used never the model's own training predictions to prevent data leakage into the meta-model.
 
 ---
 
@@ -52,19 +52,19 @@ Modality-specific models generate cross-validated out-of-fold predictions. These
 | Late Fusion (weighted) | *see output* |
 | Intermediate Fusion | *see output* |
 
-All fusion strategies outperform the best single-modality baseline — confirming that the three modalities contain complementary information that integration captures.
+All fusion strategies outperform the best single-modality baseline, confirming that the three modalities contain complementary information that integration captures.
 
 ---
 
 ## 🔬 Ablation Study
 
-After building the fused model, each modality is removed in turn and the AUC drop is measured. The modality whose removal causes the largest drop is the most important contributor. This quantifies each modality's unique contribution to the integrated prediction — information that neither per-modality AUC nor the fusion model alone can provide.
+After building the fused model, each modality is removed in turn and the AUC drop is measured. The modality whose removal causes the largest drop is the most important contributor. This quantifies each modality's unique contribution to the integrated prediction, information that neither per-modality AUC nor the fusion model alone can provide.
 
 ---
 
 ## 🚫 Missing Modality Analysis
 
-In real datasets, not every patient has every modality measured. 20% of test patients are randomly assigned missing microbiome data. Late fusion handles this by averaging only the available modality predictions — degrading AUC only slightly. Early fusion would fail completely on these patients since the input vector would be incomplete.
+In real datasets, not every patient has every modality measured. 20% of test patients are randomly assigned missing microbiome data. Late fusion handles this by averaging only the available modality predictions, degrading AUC only slightly. Early fusion would fail completely on these patients since the input vector would be incomplete.
 
 ---
 
@@ -81,9 +81,9 @@ In real datasets, not every patient has every modality measured. 20% of test pat
 
 ## 🔍 Key Findings
 
-Intermediate fusion (stacking) achieves the highest AUC in this setup — it learns the optimal weighting of modality-specific signals rather than treating them equally. The ablation study reveals which modality contributes uniquely — a modality with moderate individual AUC can still be the most important contributor if it provides signal that the other two modalities cannot replicate.
+Intermediate fusion (stacking) achieves the highest AUC in this setup, it learns the optimal weighting of modality-specific signals rather than treating them equally. The ablation study reveals which modality contributes uniquely, a modality with moderate individual AUC can still be the most important contributor if it provides signal that the other two modalities cannot replicate.
 
-Late fusion's graceful handling of missing data is a meaningful practical advantage — in real clinical studies, incomplete multi-modal data is the rule rather than the exception.
+Late fusion's graceful handling of missing data is a meaningful practical advantage, in real clinical studies, incomplete multi-modal data is the rule rather than the exception.
 
 ---
 
@@ -114,18 +114,18 @@ python3 multimodal_fusion.py
 
 ## 📚 Skills Developed
 
-- The distinction between early, late, and intermediate fusion — architectures, trade-offs, and when to use each
-- Stacking ensemble design — cross-validated OOF predictions to prevent meta-model leakage
-- Ablation studies — quantifying each component's unique contribution to an integrated system
-- Handling missing modalities at inference time — a critical real-world consideration
+- The distinction between early, late, and intermediate fusion -> architectures, trade-offs, and when to use each
+- Stacking ensemble design -> cross-validated OOF predictions to prevent meta-model leakage
+- Ablation studies -> quantifying each component's unique contribution to an integrated system
+- Handling missing modalities at inference time a critical real-world consideration
 - Simulating compositional microbiome data with Dirichlet distributions
-- Evaluating integration benefit rigorously — not assuming fusion helps, but measuring the gain
+- Evaluating integration benefit rigorously -> not assuming fusion helps, but measuring the gain
 
 ---
 
 ## 🗺️ Learning Roadmap
 
-**Project 9 of 10** — a structured series building from data exploration through to advanced ML techniques.
+_**Project 9 of 10**_ -> a structured series building from data exploration through to advanced ML techniques.
 
 | # | Project | Focus |
 |---|---------|-------|
